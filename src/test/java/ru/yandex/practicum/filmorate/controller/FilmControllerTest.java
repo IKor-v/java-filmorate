@@ -30,12 +30,12 @@ class FilmControllerTest {
 
     @Test
     void createFilmsIfError() {
-        int i = 0;
+        int countError = 0;
         try {
             filmController.createFilm(new Film(1, "Форест Гамп", "Беги, лес, беги! ",
                     LocalDate.now().minusYears(30), -1));
         } catch (ValidationException e) {
-            i++;
+            countError++;
         }
 
         try {
@@ -43,39 +43,39 @@ class FilmControllerTest {
                     "Синяки деруться за дерево, но коротышки в зеленом не сдаются и потом происходит всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое",
                     LocalDate.now().minusYears(13), 120));
         } catch (ValidationException e) {
-            i++;
+            countError++;
         }
 
         try {
             filmController.createFilm(new Film(3, "", "Терминатор заблудился в джунглях",
                     LocalDate.now().minusYears(23), 120));
         } catch (ValidationException e) {
-            i++;
+            countError++;
         }
 
         try {
             filmController.createFilm(new Film(4, " ", "Два друга смотрят на море",
                     LocalDate.now().minusYears(23), 120));
         } catch (ValidationException e) {
-            i++;
+            countError++;
         }
 
         try {
             filmController.createFilm(new Film(5, "Форест Гамп", "Беги, лес, беги! ",
                     LocalDate.now().minusYears(30), 0));
         } catch (ValidationException e) {
-            i++;
+            countError++;
         }
 
         try {
             filmController.createFilm(null);
         } catch (ValidationException e) {
-            i++;
+            countError++;
         }
 
         Collection<Film> films = filmController.getAllFilms();
         Assertions.assertEquals(0, films.size());
-        Assertions.assertEquals(6, i);
+        Assertions.assertEquals(6, countError);
 
     }
 
@@ -117,7 +117,7 @@ class FilmControllerTest {
 
     @Test
     void updateFilmIfError() throws ValidationException {
-        int i = 0;
+        int countError = 0;
         Film film = new Film(1, "Форест Гамп", "Беги, лес, беги! ",
                 LocalDate.now().minusYears(30), 120);
         filmController.createFilm(film);
@@ -126,7 +126,7 @@ class FilmControllerTest {
             filmController.updateFilm(new Film(1, "Форест", "Беги, лес, беги! ",
                     LocalDate.now().minusYears(30), -30));
         } catch (ValidationException e) {
-            i++;
+            countError++;
         }
 
         try {
@@ -134,33 +134,33 @@ class FilmControllerTest {
                     "Синяки деруться за дерево, но коротышки в зеленом не сдаются и потом происходит всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое",
                     LocalDate.now().minusYears(13), 120));
         } catch (ValidationException e) {
-            i++;
+            countError++;
         }
 
         try {
             filmController.updateFilm(new Film(1, "", "Терминатор заблудился в джунглях",
                     LocalDate.now().minusYears(23), 120));
         } catch (ValidationException e) {
-            i++;
+            countError++;
         }
 
         try {
             filmController.createFilm(new Film(1, " ", "Два друга смотрят на море",
                     LocalDate.now().minusYears(23), 120));
         } catch (ValidationException e) {
-            i++;
+            countError++;
         }
 
         try {
             filmController.createFilm(new Film(1, "Форест Гамп", "Беги, лес, беги! ",
                     LocalDate.now().minusYears(30), 0));
         } catch (ValidationException e) {
-            i++;
+            countError++;
         }
 
         Collection<Film> films = filmController.getAllFilms();
         Assertions.assertEquals(1, films.size());
         Assertions.assertTrue(films.contains(film));
-        Assertions.assertEquals(5, i);
+        Assertions.assertEquals(5, countError);
     }
 }
