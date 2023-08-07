@@ -29,7 +29,7 @@ class UserControllerTest {
 
     @Test
     void createUserIfError() {
-        int i=0;
+        int i = 0;
         try {
             userController.createUser(new User(1, "kor@mail.ru", "", "Man", LocalDate.now().minusYears(20)));
         } catch (ValidationException e) {
