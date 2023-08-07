@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -41,7 +42,7 @@ public class UserController {
                 log.info("Данные пользователя с id = " + id + " обновленны.");
                 return user;
             } else {
-                throw new ValidationException("Пользователь с id = " + id + " не найден.");
+                throw new NotFoundException("Пользователь с id = " + id + " не найден.");
             }
         }
         log.info("Не удалось обновить данные пользователя: " + user.toString());

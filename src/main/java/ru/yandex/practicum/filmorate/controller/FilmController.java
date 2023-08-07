@@ -29,11 +29,12 @@ public class FilmController {
             return film;
         }
         log.info("Не удалось добавить фильм:" + film.toString());
+
         return null;
     }
 
     @PutMapping(pathUrl)
-    public Film updateFilm(@RequestBody Film film) throws ValidationException {
+    public Film updateFilm(@RequestBody Film film) throws ValidationException, NotFoundException {
         if (Film.validationFilm(film)) {
             int id = film.getId();
             Film oldFilm = returnFilm(id);
@@ -43,7 +44,7 @@ public class FilmController {
                 log.info("Данные фильма '" + film.getName() + "' с id = " + film.getId() + "  обновленны.");
                 return film;
             } else {
-                throw new ValidationException("Фильма с id =" + id + " не найденно.");
+                throw new NotFoundException("Фильма с id =" + id + " не найденно.");
             }
         }
         log.info("Не удалось обновить данные фильма:" + film.toString());
