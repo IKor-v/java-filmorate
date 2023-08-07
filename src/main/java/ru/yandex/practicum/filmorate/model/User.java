@@ -18,7 +18,7 @@ public class User {
         this.id = id;
         this.email = email.trim();
         this.login = login.trim();
-        if ((name==null) || (name.isBlank())) {
+        if ((name == null) || (name.isBlank())) {
             this.name = login.trim();
         } else {
             this.name = name.trim();
