@@ -14,7 +14,7 @@ public class User {
     private String name; //имя
     private LocalDate birthday; //день рождения
 
-    public User(int id , String email, String login, String name,  LocalDate birthday) {
+    public User(int id, String email, String login, String name, LocalDate birthday) {
         this.id = id;
         this.email = email.trim();
         this.login = login.trim();
