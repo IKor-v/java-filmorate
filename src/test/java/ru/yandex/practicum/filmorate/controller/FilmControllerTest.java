@@ -107,7 +107,7 @@ class FilmControllerTest {
         Assertions.assertEquals(1, films.size());
         Assertions.assertTrue(films.contains(film));
 
-        Film film1 = new Film(1, "Форрест Гамп", "Беги, лес, беги! ",
+        Film film1 = new Film(film.getId(), "Форрест Гамп", "Беги, лес, беги! ",
                 LocalDate.now().minusYears(30), Duration.ofMinutes(144));
         filmController.updateFilm(film1);
         films = filmController.getAllFilms();

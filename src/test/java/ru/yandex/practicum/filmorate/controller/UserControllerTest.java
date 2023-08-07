@@ -99,7 +99,7 @@ class UserControllerTest {
     void updateUser() throws ValidationException {
         User user = new User(1, "kor@mail.ru", "car", "Jack", LocalDate.now().minusYears(20));
         userController.createUser(user);
-        User user1 = new User(1, "korgi@mail.ru", "Cartman", "Jack", LocalDate.now().minusYears(21));
+        User user1 = new User(user.getId(), "korgi@mail.ru", "Cartman", "Jack", LocalDate.now().minusYears(21));
         userController.updateUser(user1);
         Collection<User> users = userController.getAllUsers();
         Assertions.assertEquals(1, users.size());

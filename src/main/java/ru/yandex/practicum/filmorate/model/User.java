@@ -7,9 +7,14 @@ import java.time.LocalDate;
 
 @Data
 public class User {
-    int id; //идентификатор
+    private static int lastId = 1;
+    private int id; //идентификатор
+    private String email; //почта
+    private String login; //логин
+    private String name; //имя
+    private LocalDate birthday; //день рождения
 
-    public User(int id, String email, String login, String name, LocalDate birthday) {
+    public User(int id , String email, String login, String name,  LocalDate birthday) {
         this.id = id;
         this.email = email.trim();
         this.login = login.trim();
@@ -21,11 +26,9 @@ public class User {
         this.birthday = birthday;
     }
 
-    String email; //почта
-    String login; //логин
-    String name; //имя
-    LocalDate birthday; //день рождения
-
+    public static int getLastId() {
+        return lastId++;
+    }
 
     public static boolean validationUser(User user) throws ValidationException {
         String message = "Ошибка валидации пользователя: ";

@@ -10,11 +10,16 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 public class Film {
+    private static int lastId = 1;
     int id;  //идентификатор
     String name; //имя
     String description;
     LocalDate releaseDate; //дата релиза
     Duration duration; //продолжительность фильма
+
+    public static int getLastId() {
+        return lastId++;
+    }
 
     public static boolean validationFilm(Film film) throws ValidationException {
         String message = "Ошибка валидации фильма: ";

@@ -12,16 +12,18 @@ import java.util.List;
 @Slf4j
 public class FilmController {
 
+    private final String pathUrl = "/films";
     private final List<Film> films = new ArrayList<>();
 
-    @GetMapping("/film")
+    @GetMapping(pathUrl)
     public Collection<Film> getAllFilms() {
         return films;
     }
 
-    @PostMapping("/film")
+    @PostMapping(pathUrl)
     public Film createFilm(@RequestBody Film film) throws ValidationException {
         if (Film.validationFilm(film)) {
+            film.setId(Film.getLastId());
             films.add(film);
             log.info("Добавлени фильм:" + film.getName() + ", с id = " + film.getId());
             return film;
@@ -30,7 +32,7 @@ public class FilmController {
         return null;
     }
 
-    @PutMapping("/film")
+    @PutMapping(pathUrl)
     public Film updateFilm(@RequestBody Film film) throws ValidationException {
         if (Film.validationFilm(film)) {
             int id = film.getId();
@@ -40,6 +42,8 @@ public class FilmController {
                 films.add(film);
                 log.info("Данные фильма '" + film.getName() + "' с id = " + film.getId() + "  обновленны.");
                 return film;
+            } else {
+                throw new ValidationException("Фильма с id =" + id + " не найденно.");
             }
         }
         log.info("Не удалось обновить данные фильма:" + film.toString());
