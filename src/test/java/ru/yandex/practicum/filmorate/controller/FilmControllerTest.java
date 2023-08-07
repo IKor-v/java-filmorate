@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Collection;
 
+@Slf4j
 class FilmControllerTest {
     private FilmController filmController;
 
@@ -29,10 +31,12 @@ class FilmControllerTest {
 
     @Test
     void createFilmsIfError() {
+        int i = 0;
         try {
             filmController.createFilm(new Film(1, "Форест Гамп", "Беги, лес, беги! ",
                     LocalDate.now().minusYears(30), Duration.ofHours(-1)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
@@ -40,33 +44,39 @@ class FilmControllerTest {
                     "Синяки деруться за дерево, но коротышки в зеленом не сдаются и потом происходит всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое",
                     LocalDate.now().minusYears(13), Duration.ofHours(2)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             filmController.createFilm(new Film(3, "", "Терминатор заблудился в джунглях",
                     LocalDate.now().minusYears(23), Duration.ofHours(2)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             filmController.createFilm(new Film(4, " ", "Два друга смотрят на море",
                     LocalDate.now().minusYears(23), Duration.ofHours(2)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             filmController.createFilm(new Film(5, "Форест Гамп", "Беги, лес, беги! ",
                     LocalDate.now().minusYears(30), Duration.ofHours(0)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             filmController.createFilm(null);
         } catch (ValidationException e) {
+            i++;
         }
 
         Collection<Film> films = filmController.getAllFilms();
         Assertions.assertEquals(0, films.size());
+        Assertions.assertEquals(6, i);
 
     }
 
@@ -108,6 +118,7 @@ class FilmControllerTest {
 
     @Test
     void updateFilmIfError() throws ValidationException {
+        int i = 0;
         Film film = new Film(1, "Форест Гамп", "Беги, лес, беги! ",
                 LocalDate.now().minusYears(30), Duration.ofHours(2));
         filmController.createFilm(film);
@@ -116,6 +127,7 @@ class FilmControllerTest {
             filmController.updateFilm(new Film(1, "Форест", "Беги, лес, беги! ",
                     LocalDate.now().minusYears(30), Duration.ofHours(-1)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
@@ -123,28 +135,33 @@ class FilmControllerTest {
                     "Синяки деруться за дерево, но коротышки в зеленом не сдаются и потом происходит всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое",
                     LocalDate.now().minusYears(13), Duration.ofHours(2)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             filmController.updateFilm(new Film(1, "", "Терминатор заблудился в джунглях",
                     LocalDate.now().minusYears(23), Duration.ofHours(2)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             filmController.createFilm(new Film(1, " ", "Два друга смотрят на море",
                     LocalDate.now().minusYears(23), Duration.ofHours(2)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             filmController.createFilm(new Film(1, "Форест Гамп", "Беги, лес, беги! ",
                     LocalDate.now().minusYears(30), Duration.ofHours(0)));
         } catch (ValidationException e) {
+            i++;
         }
 
         Collection<Film> films = filmController.getAllFilms();
         Assertions.assertEquals(1, films.size());
         Assertions.assertTrue(films.contains(film));
+        Assertions.assertEquals(5, i);
     }
 }

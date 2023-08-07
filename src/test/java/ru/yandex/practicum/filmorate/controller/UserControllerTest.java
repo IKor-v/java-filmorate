@@ -29,48 +29,58 @@ class UserControllerTest {
 
     @Test
     void createUserIfError() {
+        int i=0;
         try {
             userController.createUser(new User(1, "kor@mail.ru", "", "Man", LocalDate.now().minusYears(20)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             userController.createUser(new User(2, "kor@mail.ru", " ", "Man", LocalDate.now().minusYears(20)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             userController.createUser(new User(3, "kormail.ru", "car", "Man", LocalDate.now().minusYears(20)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             userController.createUser(new User(4, "", "car", "Man", LocalDate.now().minusYears(20)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             userController.createUser(new User(5, " ", "car", "Man", LocalDate.now().minusYears(20)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             userController.createUser(new User(6, "kor@mail.ru", "car", "Man", LocalDate.now().plusDays(1)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             userController.createUser(new User(7, "kor@mail.ru", "Car Man", "Man", LocalDate.now().minusYears(20)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             userController.createUser(null);
         } catch (ValidationException e) {
+            i++;
         }
 
         Collection<User> users = userController.getAllUsers();
         Assertions.assertEquals(0, users.size());
+        Assertions.assertEquals(8, i);
 
     }
 
@@ -99,55 +109,66 @@ class UserControllerTest {
 
     @Test
     void updateUserIfError() {
+        int i = 0;
         User user = new User(1, "kor@mail.ru", "Car", "Man", LocalDate.now().minusYears(20));
         try {
             userController.createUser(user);
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             userController.updateUser(new User(1, "kor@mail.ru", "", "Man", LocalDate.now().minusYears(20)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             userController.updateUser(new User(2, "kor@mail.ru", " ", "Man", LocalDate.now().minusYears(20)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             userController.updateUser(new User(3, "kormail.ru", "car", "Man", LocalDate.now().minusYears(20)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             userController.updateUser(new User(4, "", "car", "Man", LocalDate.now().minusYears(20)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             userController.updateUser(new User(5, " ", "car", "Man", LocalDate.now().minusYears(20)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             userController.updateUser(new User(6, "kor@mail.ru", "car", "Man", LocalDate.now().plusDays(1)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             userController.updateUser(new User(7, "kor@mail.ru", "Car Man", "Man", LocalDate.now().minusYears(20)));
         } catch (ValidationException e) {
+            i++;
         }
 
         try {
             userController.updateUser(null);
         } catch (ValidationException e) {
+            i++;
         }
 
         Collection<User> users = userController.getAllUsers();
         Assertions.assertNotNull(users);
         Assertions.assertEquals(1, users.size());
         Assertions.assertTrue(users.contains(user));
+        Assertions.assertEquals(8, i);
     }
 }
