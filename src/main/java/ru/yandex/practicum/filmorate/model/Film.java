@@ -1,21 +1,33 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.ToString;
 import ru.yandex.practicum.filmorate.controller.ValidationException;
 
 import java.time.Duration;
 import java.time.LocalDate;
 
 @Data
-@AllArgsConstructor
 public class Film {
     private static int lastId = 1;
     int id;  //идентификатор
     String name; //имя
     String description;
     LocalDate releaseDate; //дата релиза
-    Duration duration; //продолжительность фильма
+    int duration; //продолжительность фильма
+
+    @ToString.Exclude
+    Duration fullDuration;
+
+    public Film(int id, String name, String description, LocalDate releaseDate, int duration) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.fullDuration = Duration.ofMinutes(duration);
+    }
+
 
     public static int getLastId() {
         return lastId++;
@@ -33,7 +45,7 @@ public class Film {
             message += "дата выхода фильма не может быть раньше 25.12.1895";
         } else if (film.getDescription().length() > 200) {
             message += "длинна описания не может быть более 200 символов.";
-        } else if (film.getDuration().toSeconds() <= 0) {
+        } else if (film.getFullDuration().toSeconds() <= 0) {
             message += "продолжительность фильма может быть только положительной.";
         } else {
             return true;
