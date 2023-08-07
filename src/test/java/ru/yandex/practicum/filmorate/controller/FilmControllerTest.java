@@ -24,7 +24,7 @@ class FilmControllerTest {
         Collection<Film> films = filmController.getAllFilms();
         Assertions.assertNotNull(films);
         Assertions.assertEquals(0, films.size());
-        filmController.createFilm(new Film(1, "Титаник", "Девушка не подвинулась на двери", LocalDate.now().minusYears(23), Duration.ofHours(2)));
+        filmController.createFilm(new Film(1, "Титаник", "Девушка не подвинулась на двери", LocalDate.now().minusYears(23), 120));
         films = filmController.getAllFilms();
         Assertions.assertEquals(1, films.size());
     }
@@ -34,7 +34,7 @@ class FilmControllerTest {
         int i = 0;
         try {
             filmController.createFilm(new Film(1, "Форест Гамп", "Беги, лес, беги! ",
-                    LocalDate.now().minusYears(30), Duration.ofHours(-1)));
+                    LocalDate.now().minusYears(30), -1));
         } catch (ValidationException e) {
             i++;
         }
@@ -42,28 +42,28 @@ class FilmControllerTest {
         try {
             filmController.createFilm(new Film(2, "Аватар",
                     "Синяки деруться за дерево, но коротышки в зеленом не сдаются и потом происходит всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое",
-                    LocalDate.now().minusYears(13), Duration.ofHours(2)));
+                    LocalDate.now().minusYears(13), 120));
         } catch (ValidationException e) {
             i++;
         }
 
         try {
             filmController.createFilm(new Film(3, "", "Терминатор заблудился в джунглях",
-                    LocalDate.now().minusYears(23), Duration.ofHours(2)));
+                    LocalDate.now().minusYears(23), 120));
         } catch (ValidationException e) {
             i++;
         }
 
         try {
             filmController.createFilm(new Film(4, " ", "Два друга смотрят на море",
-                    LocalDate.now().minusYears(23), Duration.ofHours(2)));
+                    LocalDate.now().minusYears(23), 120));
         } catch (ValidationException e) {
             i++;
         }
 
         try {
             filmController.createFilm(new Film(5, "Форест Гамп", "Беги, лес, беги! ",
-                    LocalDate.now().minusYears(30), Duration.ofHours(0)));
+                    LocalDate.now().minusYears(30), 0));
         } catch (ValidationException e) {
             i++;
         }
@@ -83,14 +83,14 @@ class FilmControllerTest {
     @Test
     void createFilmsIfBoundaryValues() throws ValidationException {
         filmController.createFilm(new Film(1, "Форест Гамп", "Беги, лес, беги! ",
-                LocalDate.now().minusYears(30), Duration.ofSeconds(1)));
+                LocalDate.now().minusYears(30), 120));
 
         filmController.createFilm(new Film(2, "Аватар",
                 "Синяки деруться за дерево, но коротышки в зеленом не сдаются и потом происходит всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-",
-                LocalDate.now().minusYears(13), Duration.ofHours(2)));
+                LocalDate.now().minusYears(13), 120));
 
         filmController.createFilm(new Film(3, "Х", "Терминатор заблудился в джунглях",
-                LocalDate.now().minusYears(23), Duration.ofHours(2)));
+                LocalDate.now().minusYears(23), 120));
 
 
         Collection<Film> films = filmController.getAllFilms();
@@ -101,14 +101,14 @@ class FilmControllerTest {
     @Test
     void updateFilm() throws ValidationException {
         Film film = new Film(1, "Форест Гамп", "Беги, лес, беги! ",
-                LocalDate.now().minusYears(30), Duration.ofHours(2));
+                LocalDate.now().minusYears(30), 120);
         filmController.createFilm(film);
         Collection<Film> films = filmController.getAllFilms();
         Assertions.assertEquals(1, films.size());
         Assertions.assertTrue(films.contains(film));
 
         Film film1 = new Film(film.getId(), "Форрест Гамп", "Беги, лес, беги! ",
-                LocalDate.now().minusYears(30), Duration.ofMinutes(144));
+                LocalDate.now().minusYears(30), 144);
         filmController.updateFilm(film1);
         films = filmController.getAllFilms();
         Assertions.assertEquals(1, films.size());
@@ -120,12 +120,12 @@ class FilmControllerTest {
     void updateFilmIfError() throws ValidationException {
         int i = 0;
         Film film = new Film(1, "Форест Гамп", "Беги, лес, беги! ",
-                LocalDate.now().minusYears(30), Duration.ofHours(2));
+                LocalDate.now().minusYears(30), 120);
         filmController.createFilm(film);
 
         try {
             filmController.updateFilm(new Film(1, "Форест", "Беги, лес, беги! ",
-                    LocalDate.now().minusYears(30), Duration.ofHours(-1)));
+                    LocalDate.now().minusYears(30), -30));
         } catch (ValidationException e) {
             i++;
         }
@@ -133,28 +133,28 @@ class FilmControllerTest {
         try {
             filmController.updateFilm(new Film(1, "Аватар",
                     "Синяки деруться за дерево, но коротышки в зеленом не сдаются и потом происходит всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое-всякое",
-                    LocalDate.now().minusYears(13), Duration.ofHours(2)));
+                    LocalDate.now().minusYears(13), 120));
         } catch (ValidationException e) {
             i++;
         }
 
         try {
             filmController.updateFilm(new Film(1, "", "Терминатор заблудился в джунглях",
-                    LocalDate.now().minusYears(23), Duration.ofHours(2)));
+                    LocalDate.now().minusYears(23), 120));
         } catch (ValidationException e) {
             i++;
         }
 
         try {
             filmController.createFilm(new Film(1, " ", "Два друга смотрят на море",
-                    LocalDate.now().minusYears(23), Duration.ofHours(2)));
+                    LocalDate.now().minusYears(23), 120));
         } catch (ValidationException e) {
             i++;
         }
 
         try {
             filmController.createFilm(new Film(1, "Форест Гамп", "Беги, лес, беги! ",
-                    LocalDate.now().minusYears(30), Duration.ofHours(0)));
+                    LocalDate.now().minusYears(30), 0));
         } catch (ValidationException e) {
             i++;
         }

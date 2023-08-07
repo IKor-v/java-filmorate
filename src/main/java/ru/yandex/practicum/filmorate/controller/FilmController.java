@@ -25,7 +25,7 @@ public class FilmController {
         if (Film.validationFilm(film)) {
             film.setId(Film.getLastId());
             films.add(film);
-            log.info("Добавлени фильм:" + film.getName() + ", с id = " + film.getId());
+            log.info("Добавлен фильм:" + film.getName() + ", с id = " + film.getId());
             return film;
         }
         log.info("Не удалось добавить фильм:" + film.toString());
