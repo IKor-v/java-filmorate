@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Slf4j
-@ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Incorrect address")
 public class NotFoundException extends RuntimeException {
     public NotFoundException(String message) {
         super(message);

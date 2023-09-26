@@ -4,19 +4,30 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
 
+
 @Slf4j
 class FilmControllerTest {
+
     private FilmController filmController;
 
+
     @BeforeEach
+    @Autowired
     void setup() {
-        filmController = new FilmController();
+        filmController = new FilmController( new InMemoryFilmStorage(), new FilmService(new InMemoryFilmStorage()));  //???
     }
+
 
     @Test
     void createAndShowFilms() throws ValidationException {

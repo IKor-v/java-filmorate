@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -13,7 +15,7 @@ class UserControllerTest {
 
     @BeforeEach
     void setup() {
-        userController = new UserController();
+        userController = new UserController(new InMemoryUserStorage(), new UserService(new InMemoryUserStorage()));
     }
 
     @Test
@@ -25,7 +27,6 @@ class UserControllerTest {
         users = userController.getAllUsers();
         Assertions.assertEquals(1, users.size());
     }
-
 
     @Test
     void createUserIfError() {
@@ -171,4 +172,44 @@ class UserControllerTest {
         Assertions.assertTrue(users.contains(user));
         Assertions.assertEquals(8, countError);
     }
+
+    @Test
+    void getUser () {
+        User user = new User(1, "banr@mail.ru", "Jkkj", "Jack", LocalDate.now());
+        userController.createUser(user);
+        User user1 = userController.getUserForId(user.getId());
+        Assertions.assertEquals(user1, user);
+    }
+
+    @Test
+    void getNotExistUser () {
+        boolean check = false;
+        try {
+            User user1 = userController.getUserForId(1);
+        }
+        catch (NotFoundException e) {
+            check = true;
+        }
+        Assertions.assertTrue(check);
+
+    }
+
+/*    @Test
+    void friendshipNormalUsers () {
+        User user = new User(1, "kor@mail.ru", "car", "", LocalDate.now().minusYears(20));
+        userController.createUser(user);
+        User user1 = new User(2, "banr@mail.ru", "Jkkj", "Jack", LocalDate.now());
+        userController.createUser(user1);
+
+        int userFriends = userController.getAllFriends(user.getId()).size();
+        int user1Friends = userController.getAllFriends(user1.getId()).size();
+        Assertions.assertEquals(userFriends, 0);
+        Assertions.assertEquals(user1Friends, 0);
+
+        userController.addFriend(user.getId(), user1.getId());
+        Assertions.assertEquals(userFriends, 1);
+        Assertions.assertEquals(user1Friends, 1);
+    }*/
+
+
 }

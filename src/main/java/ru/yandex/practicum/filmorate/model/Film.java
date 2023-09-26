@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Data
 public class Film {
     @NonNull
-    private int id;
+    private long id;
     @NonNull
     @NotBlank
     private String name;
@@ -26,7 +26,7 @@ public class Film {
     @ToString.Exclude
     private Duration fullDuration;
 
-    public Film(int id, String name, String description, LocalDate releaseDate, int duration) {
+    public Film(long id, String name, String description, LocalDate releaseDate, int duration) {
         this.id = id;
         this.name = name;
         this.description = description;
