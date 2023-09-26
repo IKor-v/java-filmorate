@@ -6,10 +6,14 @@ import java.util.Collection;
 
 public interface FilmStorage {  //добавление, удаление и модификация фильмов
 
-    public Collection<Film> getAllFilms();
-    public Film createFilm(Film film);
-    public Film updateFilm(Film film);
-    public Film getFilm (long filmId);
-    public long getSize();
+    Collection<Film> getAllFilms();
+
+    Film createFilm(Film film);
+
+    Film updateFilm(Film film);
+
+    Film getFilm(long filmId);
+
+    long getSize();
 
 }

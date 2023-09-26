@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class InMemoryFilmStorage implements FilmStorage{  //хранение, обновление и поиск
+public class InMemoryFilmStorage implements FilmStorage {  //хранение, обновление и поиск
     private final Map<Long, Film> films = new HashMap<>();
     private int lastId = 1;
 
@@ -24,7 +24,7 @@ public class InMemoryFilmStorage implements FilmStorage{  //хранение, о
         return films.size();
     }
 
-    public Film createFilm(Film film){
+    public Film createFilm(Film film) {
         if (validationFilm(film)) {
             film.setId(getLastId());
             films.put(film.getId(), film);
@@ -33,12 +33,11 @@ public class InMemoryFilmStorage implements FilmStorage{  //хранение, о
         throw new ValidationException("Не удалось добавить фильм: " + film.toString());
     }
 
-    public Film updateFilm (Film film) {
+    public Film updateFilm(Film film) {
         if (validationFilm(film)) {
             long id = film.getId();
             if (films.containsKey(id)) {
                 films.put(id, film);
-                //log.info("Данные фильма '" + film.getName() + "' с id = " + film.getId() + "  обновленны.");
                 return film;
             } else {
                 throw new NotFoundException("Фильма с id =" + id + " не найденно.");
@@ -47,7 +46,7 @@ public class InMemoryFilmStorage implements FilmStorage{  //хранение, о
         throw new ValidationException("Не удалось обновить данные фильма:" + film.toString());
     }
 
-    public Film getFilm (long filmId){
+    public Film getFilm(long filmId) {
         if (films.containsKey(filmId)) {
             return films.get(filmId);
         } else {
@@ -58,6 +57,7 @@ public class InMemoryFilmStorage implements FilmStorage{  //хранение, о
     private int getLastId() {
         return lastId++;
     }
+
     private boolean validationFilm(Film film) throws ValidationException {
         String message = "Ошибка валидации фильма: ";
         if (film == null) {

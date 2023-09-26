@@ -174,7 +174,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getUser () {
+    void getUser() {
         User user = new User(1, "banr@mail.ru", "Jkkj", "Jack", LocalDate.now());
         userController.createUser(user);
         User user1 = userController.getUserForId(user.getId());
@@ -182,34 +182,15 @@ class UserControllerTest {
     }
 
     @Test
-    void getNotExistUser () {
+    void getNotExistUser() {
         boolean check = false;
         try {
             User user1 = userController.getUserForId(1);
-        }
-        catch (NotFoundException e) {
+        } catch (NotFoundException e) {
             check = true;
         }
         Assertions.assertTrue(check);
 
     }
-
-/*    @Test
-    void friendshipNormalUsers () {
-        User user = new User(1, "kor@mail.ru", "car", "", LocalDate.now().minusYears(20));
-        userController.createUser(user);
-        User user1 = new User(2, "banr@mail.ru", "Jkkj", "Jack", LocalDate.now());
-        userController.createUser(user1);
-
-        int userFriends = userController.getAllFriends(user.getId()).size();
-        int user1Friends = userController.getAllFriends(user1.getId()).size();
-        Assertions.assertEquals(userFriends, 0);
-        Assertions.assertEquals(user1Friends, 0);
-
-        userController.addFriend(user.getId(), user1.getId());
-        Assertions.assertEquals(userFriends, 1);
-        Assertions.assertEquals(user1Friends, 1);
-    }*/
-
 
 }

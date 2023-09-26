@@ -11,14 +11,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class InMemoryUserStorage implements UserStorage{
+public class InMemoryUserStorage implements UserStorage {
     private int lastId = 1;
     private final Map<Long, User> users = new HashMap<>();
 
-    public Collection<User> getAllUsers (){
+    public Collection<User> getAllUsers() {
         return users.values();
     }
-    public User createUser(User user){
+
+    public User createUser(User user) {
         if (validationUser(user)) {
             user.setId(getLastId());
             users.put(user.getId(), userPreparation(user));
@@ -27,7 +28,8 @@ public class InMemoryUserStorage implements UserStorage{
         }
         throw new ValidationException("Не удалось добавить пользователя: " + user.toString());
     }
-    public User updateUser(User user){
+
+    public User updateUser(User user) {
         if (validationUser(user)) {
             long id = user.getId();
             if (users.containsKey(id)) {
@@ -62,7 +64,7 @@ public class InMemoryUserStorage implements UserStorage{
         throw new ValidationException(message);
     }
 
-    public User getUser(long userId){
+    public User getUser(long userId) {
         if (users.containsKey(userId)) {
             return users.get(userId);
         } else {

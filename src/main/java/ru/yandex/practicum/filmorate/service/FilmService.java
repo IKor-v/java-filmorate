@@ -11,10 +11,10 @@ import java.util.*;
 
 @Service
 public class FilmService {  //добавление и удаление лайка, вывод 10 наиболее популярных фильмов по количеству лайков
-    private Map<Long, Set<Long>> filmLikeList = new HashMap<>(); //id фильма и список id пользователей
+    private final Map<Long, Set<Long>> filmLikeList = new HashMap<>(); //id фильма и список id пользователей
 
-    private FilmStorage filmStorage;
-    //private UserStorage userStorage;
+    private final FilmStorage filmStorage;
+
     @Autowired
     UserController userController;
 

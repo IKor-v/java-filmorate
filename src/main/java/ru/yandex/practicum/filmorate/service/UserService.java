@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.*;
@@ -11,19 +10,16 @@ import java.util.*;
 @Service
 public class UserService {  //добавление в друзья, удаление из друзей, вывод списка общих друзей
 
-    private Map<Long, Set<Long>> friendsList = new HashMap(); //id-пользователя и id-друзей
+    private final Map<Long, Set<Long>> friendsList = new HashMap(); //id-пользователя и id-друзей
 
-/*    @Autowired
-    FilmStorage filmStorage;*/
-//    @Autowired
     UserStorage userStorage;
 
     @Autowired
-    public UserService (UserStorage userStorage) {
+    public UserService(UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
-    public void addFriend (long userId, long friendId) {
+    public void addFriend(long userId, long friendId) {
         checkUser(userId);
         checkUser(friendId);
         System.out.println("Чек пройден: " + userId + " , " + friendId);
@@ -32,7 +28,7 @@ public class UserService {  //добавление в друзья, удален
         if (friendsList.containsKey(userId)) {
             userFriends = friendsList.get(userId);
             friendFriends = friendsList.get(friendId);
-        } else  {
+        } else {
             userFriends = new HashSet<>();
             friendFriends = new HashSet<>();
         }
@@ -43,7 +39,7 @@ public class UserService {  //добавление в друзья, удален
 
     }
 
-    public void deleteFriend (long userId, long unfriendId) {
+    public void deleteFriend(long userId, long unfriendId) {
         checkUser(userId);
         checkUser(unfriendId);
         if ((friendsList.containsKey(userId)) && (friendsList.containsKey(unfriendId))) {
@@ -55,11 +51,10 @@ public class UserService {  //добавление в друзья, удален
             }
             friendsList.put(userId, userFriends);
             friendsList.put(unfriendId, unfriendFriends);
-        } else
-            return;
+        }
     }
 
-    public List<User> getAllFriends (long userId) {
+    public List<User> getAllFriends(long userId) {
         checkUser(userId);
         Set<Long> idFriends = friendsList.get(userId);
         List<User> result = new ArrayList<>();
@@ -69,13 +64,13 @@ public class UserService {  //добавление в друзья, удален
         return result;
     }
 
-    public List<User> getCommonFriends (long userId, long friendId) {
+    public List<User> getCommonFriends(long userId, long friendId) {
         checkUser(userId);
         checkUser(friendId);
         List<User> result = new ArrayList<>();
         Set<Long> userFriends = friendsList.get(userId);
-        Set<Long> friendFriends =friendsList.get(friendId);
-        if ((userFriends!= null) && (friendFriends!= null) && (!userFriends.isEmpty()) && (!friendFriends.isEmpty())) {
+        Set<Long> friendFriends = friendsList.get(friendId);
+        if ((userFriends != null) && (friendFriends != null) && (!userFriends.isEmpty()) && (!friendFriends.isEmpty())) {
             for (Long userFriendId : userFriends) {
                 if (friendFriends.contains(userFriendId)) {
                     result.add(userStorage.getUser(userFriendId));
@@ -86,13 +81,13 @@ public class UserService {  //добавление в друзья, удален
         return new ArrayList<>();
     }
 
-    public void addUserInList (long id) {
+    public void addUserInList(long id) {
         if (!friendsList.containsKey(id)) {
             friendsList.put(id, new HashSet<>());
         }
     }
 
-    private boolean checkUser (long id) {
+    private boolean checkUser(long id) {
         if (userStorage.getUser(id) != null) {
             return true;
         }
