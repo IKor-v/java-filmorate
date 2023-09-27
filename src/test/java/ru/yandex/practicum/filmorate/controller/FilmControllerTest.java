@@ -5,12 +5,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -25,7 +22,7 @@ class FilmControllerTest {
     @BeforeEach
     @Autowired
     void setup() {
-        filmController = new FilmController( new InMemoryFilmStorage(), new FilmService(new InMemoryFilmStorage()));  //???
+        filmController = new FilmController(new InMemoryFilmStorage(), new FilmService(new InMemoryFilmStorage()));  //???
     }
 
 
