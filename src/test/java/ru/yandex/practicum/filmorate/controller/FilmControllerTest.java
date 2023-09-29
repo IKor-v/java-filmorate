@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
@@ -22,7 +23,7 @@ class FilmControllerTest {
     @BeforeEach
     @Autowired
     void setup() {
-        filmController = new FilmController(new InMemoryFilmStorage(), new FilmService(new InMemoryFilmStorage()));  //???
+        filmController = new FilmController( new FilmService(new InMemoryFilmStorage()));  //???
     }
 
 

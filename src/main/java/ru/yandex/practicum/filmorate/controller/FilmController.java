@@ -3,9 +3,10 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -14,42 +15,36 @@ import java.util.Collection;
 @Slf4j
 @RequestMapping(value = "/films")
 public class FilmController {
-
-    //FilmStorage filmStorage = new InMemoryFilmStorage();
-
-    private final FilmStorage filmStorage;
     private final FilmService filmService;
 
     @Autowired
-    public FilmController(FilmStorage filmStorage, FilmService filmService) {
-        this.filmStorage = filmStorage;
+    public FilmController(FilmService filmService) {
         this.filmService = filmService;
     }
 
 
     @GetMapping
     public Collection<Film> getAllFilms() {
-        return filmStorage.getAllFilms();
+        return filmService.getAllFilms();
     }
 
     @PostMapping
     public Film createFilm(@Valid @RequestBody Film film) throws ValidationException {
-        Film newFilm = filmStorage.createFilm(film);
-        filmService.addFilmInList(newFilm.getId());
+        Film newFilm = filmService.createFilm(film);
         log.info("Добавлен фильм:" + film.getName() + ", с id = " + film.getId());
         return newFilm;
     }
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) throws ValidationException, NotFoundException {
-        Film updateFilm = filmStorage.updateFilm(film);
+        Film updateFilm = filmService.updateFilm(film);
         log.info("Данные фильма '" + film.getName() + "' с id = " + film.getId() + "  обновленны.");
         return updateFilm;
     }
 
     @GetMapping(value = "/{filmId}")
     public Film getFilmForId(@PathVariable int filmId) {
-        return filmStorage.getFilm(filmId);
+        return filmService.getFilm(filmId);
     }
 
     @PutMapping(value = "/{filmId}/like/{userId}")

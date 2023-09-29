@@ -2,65 +2,94 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Service
 public class UserService {  //добавление в друзья, удаление из друзей, вывод списка общих друзей
 
-    private final Map<Long, Set<Long>> friendsList = new HashMap(); //id-пользователя и id-друзей
-
-    UserStorage userStorage;
+    private final UserStorage userStorage;
 
     @Autowired
     public UserService(UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
+    public Collection<User> getAllUsers() {
+        return userStorage.getAllUsers();
+    }
+
+    public User createUser(User user) {
+        if (!validationUser(user)) {
+            throw new ValidationException("Не удалось добавить пользователя: " + user.toString());
+        }
+        return userStorage.createUser(user);
+    }
+
+    public User updateUser(User user) {
+        if (!validationUser(user)) {
+            throw new ValidationException("Не удалось обновить данные пользователя: " + user.toString());
+        }
+        return userStorage.updateUser(user);
+    }
+
+    public User getUser(long userId) {
+        return userStorage.getUser(userId);
+    }
+
     public void addFriend(long userId, long friendId) {
         checkUser(userId);
         checkUser(friendId);
-        System.out.println("Чек пройден: " + userId + " , " + friendId);
-        Set<Long> userFriends;
-        Set<Long> friendFriends;
-        if (friendsList.containsKey(userId)) {
-            userFriends = friendsList.get(userId);
-            friendFriends = friendsList.get(friendId);
-        } else {
-            userFriends = new HashSet<>();
-            friendFriends = new HashSet<>();
+        User user = userStorage.getUser(userId);
+        User friend = userStorage.getUser(friendId);
+        List<Long> userFriendsList = user.getFriendList();
+        List<Long> friendFriendsList = friend.getFriendList();
+
+        if (!userFriendsList.contains(friendId)) {
+            userFriendsList.add(friendId);
+            friendFriendsList.add(userId);
+            user.setFriendList(userFriendsList);
+            friend.setFriendList(friendFriendsList);
+            userStorage.updateUser(user);
+            userStorage.updateUser(friend);
         }
-        userFriends.add(friendId);
-        friendsList.put(userId, userFriends);
-        friendFriends.add(userId);
-        friendsList.put(friendId, friendFriends);
+
 
     }
 
     public void deleteFriend(long userId, long unfriendId) {
         checkUser(userId);
         checkUser(unfriendId);
-        if ((friendsList.containsKey(userId)) && (friendsList.containsKey(unfriendId))) {
-            Set<Long> userFriends = friendsList.get(userId);
-            Set<Long> unfriendFriends = friendsList.get(unfriendId);
-            if (userFriends.contains(unfriendId)) {
-                userFriends.remove(unfriendId);
-                unfriendFriends.remove(userId);
-            }
-            friendsList.put(userId, userFriends);
-            friendsList.put(unfriendId, unfriendFriends);
+        User user = userStorage.getUser(userId);
+        User unfriend = userStorage.getUser(unfriendId);
+        List<Long> userFriendsList = user.getFriendList();
+        List<Long> unfriendFriendsList = unfriend.getFriendList();
+
+        if (userFriendsList.contains(unfriendId)) {
+            userFriendsList.remove(unfriendId);
+            unfriendFriendsList.remove(userId);
+            user.setFriendList(userFriendsList);
+            unfriend.setFriendList(unfriendFriendsList);
+            userStorage.updateUser(user);
+            userStorage.updateUser(unfriend);
         }
+
     }
 
     public List<User> getAllFriends(long userId) {
         checkUser(userId);
-        Set<Long> idFriends = friendsList.get(userId);
         List<User> result = new ArrayList<>();
-        for (Long idFriend : idFriends) {
-            result.add(userStorage.getUser(idFriend));
+        List<Long> friendList = userStorage.getUser(userId).getFriendList();
+        for (Long id : friendList) {
+            result.add(userStorage.getUser(id));
         }
+
         return result;
     }
 
@@ -68,23 +97,17 @@ public class UserService {  //добавление в друзья, удален
         checkUser(userId);
         checkUser(friendId);
         List<User> result = new ArrayList<>();
-        Set<Long> userFriends = friendsList.get(userId);
-        Set<Long> friendFriends = friendsList.get(friendId);
-        if ((userFriends != null) && (friendFriends != null) && (!userFriends.isEmpty()) && (!friendFriends.isEmpty())) {
+        List<Long> userFriends = userStorage.getUser(userId).getFriendList();
+        List<Long> friendFriends = userStorage.getUser(friendId).getFriendList();
+        if ((!userFriends.isEmpty()) && (!friendFriends.isEmpty())) {
             for (Long userFriendId : userFriends) {
                 if (friendFriends.contains(userFriendId)) {
                     result.add(userStorage.getUser(userFriendId));
                 }
             }
-            return result;
-        }
-        return new ArrayList<>();
-    }
 
-    public void addUserInList(long id) {
-        if (!friendsList.containsKey(id)) {
-            friendsList.put(id, new HashSet<>());
         }
+        return result;
     }
 
     private boolean checkUser(long id) {
@@ -92,5 +115,23 @@ public class UserService {  //добавление в друзья, удален
             return true;
         }
         return false;
+    }
+
+    private boolean validationUser(User user) throws ValidationException {
+        String message = "Ошибка валидации пользователя: ";
+        if (user == null) {
+            message += "переданно пустое тело.";
+            throw new ValidationException(message);
+        }
+        if (user.getBirthday().isAfter(LocalDate.now())) {
+            message += "дата рождения не может быть в будущем.";
+        } else if ((user.getEmail().isBlank()) || !(user.getEmail().contains("@"))) {
+            message += "адрес электронной почты не может быть пустым или без '@'.";
+        } else if ((user.getLogin()).isBlank() || (user.getLogin().contains(" "))) {
+            message += "логин не может быть пустым или содержать пробелы";
+        } else {
+            return true;
+        }
+        throw new ValidationException(message);
     }
 }

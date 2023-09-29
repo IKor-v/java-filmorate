@@ -2,59 +2,90 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.controller.NotFoundException;
-import ru.yandex.practicum.filmorate.controller.UserController;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import java.util.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Service
 public class FilmService {  //добавление и удаление лайка, вывод 10 наиболее популярных фильмов по количеству лайков
-    private final Map<Long, Set<Long>> filmLikeList = new HashMap<>(); //id фильма и список id пользователей
-
     private final FilmStorage filmStorage;
 
     @Autowired
-    UserController userController;
+    private UserService userService;
 
     @Autowired
     public FilmService(FilmStorage filmStorage) {
         this.filmStorage = filmStorage;
     }
 
+    public Collection<Film> getAllFilms() {
+        return filmStorage.getAllFilms();
+    }
+
+    public Film createFilm(Film film) {
+        if (!validationFilm(film)) {
+            throw new ValidationException("Не удалось добавить фильм: " + film.toString());
+        }
+        return filmStorage.createFilm(film);
+    }
+
+    public Film updateFilm(Film film) {
+        if (!validationFilm(film)) {
+            throw new ValidationException("Не удалось обновить фильм: " + film.toString());
+        }
+        return filmStorage.updateFilm(film);
+    }
+
+    public Film getFilm(long filmId) {
+        return filmStorage.getFilm(filmId);
+    }
+
     public Film addLike(long userId, long filmId) {
-        if (!checkFilm(filmId) || !(checkUser(userId))) {
+        if (!checkFilm(filmId)) {
             throw new NotFoundException("Фильма с тами id не обнаруженно.");
         }
-        Set<Long> result;
-        if (!filmLikeList.containsKey(filmId)) {
-            result = new HashSet<>();
-        } else {
-            result = filmLikeList.get(filmId);
+        if (!(checkUser(userId))) {
+            throw new NotFoundException("Пользователя с тами id не обнаруженно.");
         }
-        result.add(userId);
-        filmLikeList.put(filmId, result);
-        return filmStorage.getFilm(filmId);
+        Film film = filmStorage.getFilm(filmId);
+        List<Long> likeList = film.getLikeList();
+        if (!likeList.contains(userId)) {
+            likeList.add(userId);
+            film.setLikeList(likeList);
+            filmStorage.updateFilm(film);
+        }
+        return film;
+
     }
 
     public Film deleteLike(long userId, long filmId) {
-        if (!checkFilm(filmId) || !(checkUser(userId)) || (!filmLikeList.containsKey(filmId))) {
-            throw new NotFoundException("Фильма с таким id не обнаруженно.");
+        if (!checkFilm(filmId)) {
+            throw new NotFoundException("Фильма с тами id не обнаруженно.");
         }
-        Set<Long> result;
-
-        result = filmLikeList.get(filmId);
-        result.remove(userId);
-        filmLikeList.put(filmId, result);
-        return filmStorage.getFilm(filmId);
+        if (!(checkUser(userId))) {
+            throw new NotFoundException("Пользователя с тами id не обнаруженно.");
+        }
+        Film film = filmStorage.getFilm(filmId);
+        List<Long> likeList = film.getLikeList();
+        if (likeList.contains(userId)) {
+            likeList.remove(userId);
+            film.setLikeList(likeList);
+            filmStorage.updateFilm(film);
+        }
+        return film;
 
     }
 
+
     public Collection<Film> getPopularFilms(int count) {
         Collection<Film> result = new ArrayList<>();
-        Map<Long, Integer> resultList = new HashMap<>(); // id и количество лайков
-        long idFilmInMinimal = 0;
+        Film minimalFilm = new Film(0, "1", "", LocalDate.now(), 1);
         int minimalLikeInList = -1;
 
         if (filmStorage.getSize() == 0) {
@@ -63,56 +94,35 @@ public class FilmService {  //добавление и удаление лайк�
         if (filmStorage.getSize() < count) {
             count = (int) filmStorage.getSize();
         }
-        for (Map.Entry<Long, Set<Long>> film : filmLikeList.entrySet()) {
-            if (resultList.size() == 0) {
-                resultList.put(film.getKey(), film.getValue().size());
-                idFilmInMinimal = film.getKey();
-                minimalLikeInList = film.getValue().size();
+
+        for (Film film : filmStorage.getAllFilms()) {
+            int numberLikeForFilm = film.getLikeList().size();
+            if (result.size() == 0) {
+                minimalLikeInList = numberLikeForFilm;
+                minimalFilm = film;
+                result.add(film);
                 continue;
             }
-
-            if ((film.getValue().size() > minimalLikeInList) && (resultList.size() >= count)) {
-                resultList.remove(idFilmInMinimal);
+            if (result.size() < count) {
+                if (numberLikeForFilm < minimalLikeInList) {
+                    minimalFilm = film;
+                    minimalLikeInList = numberLikeForFilm;
+                }
+                result.add(film);
+            } else if ((numberLikeForFilm > minimalLikeInList) && (result.size() >= count)) {
+                result.remove(minimalFilm);
+                result.add(film);
             }
-            resultList.put(film.getKey(), film.getValue().size());
 
 
-            idFilmInMinimal = getIdMin(resultList);
-            minimalLikeInList = filmLikeList.get(idFilmInMinimal).size();
-        }
-
-        for (Map.Entry idAndLike : resultList.entrySet()) { // сопоставление id к Film
-            result.add(filmStorage.getFilm((Long) idAndLike.getKey()));
         }
         return result;
+
     }
 
-
-    public void addFilmInList(long filmId) {
-        if (!filmLikeList.containsKey(filmId)) {
-            filmLikeList.put(filmId, new HashSet<>());
-        }
-    }
-
-    private long getIdMin(Map<Long, Integer> intList) {
-        long result = 0;
-        int min = -1;
-        for (Map.Entry<Long, Integer> i : intList.entrySet()) {
-            if ((min == -1) && (min != i.getValue())) {
-                min = i.getValue();
-                result = i.getKey();
-                continue;
-            }
-            if (i.getValue() < min) {
-                min = i.getValue();
-                result = i.getKey();
-            }
-        }
-        return result;
-    }
 
     private boolean checkUser(long userId) {
-        if (userController.getUserForId(userId) != null) {
+        if (userService.getUser(userId) != null) {
             return true;
         }
         return false;
@@ -123,5 +133,25 @@ public class FilmService {  //добавление и удаление лайк�
             return true;
         }
         return false;
+    }
+
+    private boolean validationFilm(Film film) throws ValidationException {
+        String message = "Ошибка валидации фильма: ";
+        if (film == null) {
+            message += "переданно пустое тело.";
+            throw new ValidationException(message);
+        }
+        if (film.getName().isBlank()) {
+            message += "название фильма не может быть пустым.";
+        } else if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 25))) {
+            message += "дата выхода фильма не может быть раньше 25.12.1895";
+        } else if (film.getDescription().length() > 200) {
+            message += "длинна описания не может быть более 200 символов.";
+        } else if (film.getFullDuration().toSeconds() <= 0) {
+            message += "продолжительность фильма может быть только положительной.";
+        } else {
+            return true;
+        }
+        throw new ValidationException(message);
     }
 }

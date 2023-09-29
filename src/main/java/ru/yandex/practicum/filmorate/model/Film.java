@@ -1,30 +1,33 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
-import lombok.NonNull;
 import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class Film {
-    @NonNull
     private long id;
-    @NonNull
     @NotBlank
     private String name;
+    @Size(min = 0, max = 200, message = "Длинна описания не может быть больше 200 символов.")
     private String description;
-    @NonNull
+    @NotNull
     private LocalDate releaseDate;
-    @NonNull
+    @NotNull
     @Positive
     private int duration;
-
     @ToString.Exclude
     private Duration fullDuration;
+
+    private List<Long> likeList = new ArrayList<>();
 
     public Film(long id, String name, String description, LocalDate releaseDate, int duration) {
         this.id = id;
