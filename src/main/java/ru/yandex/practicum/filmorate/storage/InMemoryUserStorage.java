@@ -10,8 +10,8 @@ import java.util.Map;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
-    private int lastId = 1;
     private final Map<Long, User> users = new HashMap<>();
+    private int lastId = 1;
 
     public Collection<User> getAllUsers() {
         return users.values();

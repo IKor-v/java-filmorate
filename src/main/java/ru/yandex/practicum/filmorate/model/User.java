@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
@@ -28,7 +27,7 @@ public class User {
 
     private List<Long> friendList = new ArrayList<>();
 
-    public User (long id, String email, String login, String name, LocalDate birthday) {
+    public User(long id, String email, String login, String name, LocalDate birthday) {
         this.id = id;
         this.email = email;
         this.login = login;
