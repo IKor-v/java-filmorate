@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -44,10 +45,11 @@ public class UserService {  //добавление в друзья, удален
     }
 
     public void addFriend(long userId, long friendId) {
-        checkUser(userId);
-        checkUser(friendId);
         User user = userStorage.getUser(userId);
         User friend = userStorage.getUser(friendId);
+        if ((user == null) || (friend == null)) {
+            throw new NotFoundException("Пользователь не найден");
+        }
         List<Long> userFriendsList = user.getFriendList();
         List<Long> friendFriendsList = friend.getFriendList();
 
@@ -64,10 +66,11 @@ public class UserService {  //добавление в друзья, удален
     }
 
     public void deleteFriend(long userId, long unfriendId) {
-        checkUser(userId);
-        checkUser(unfriendId);
         User user = userStorage.getUser(userId);
         User unfriend = userStorage.getUser(unfriendId);
+        if ((user == null) || (unfriend == null)) {
+            throw new NotFoundException("Пользователь не найден");
+        }
         List<Long> userFriendsList = user.getFriendList();
         List<Long> unfriendFriendsList = unfriend.getFriendList();
 
@@ -83,22 +86,27 @@ public class UserService {  //добавление в друзья, удален
     }
 
     public List<User> getAllFriends(long userId) {
-        checkUser(userId);
+        User user = userStorage.getUser(userId);
+        if (user == null) {
+            throw new NotFoundException("Пользователь с id = " + userId + " не найден.");
+        }
         List<User> result = new ArrayList<>();
-        List<Long> friendList = userStorage.getUser(userId).getFriendList();
+        List<Long> friendList = user.getFriendList();
         for (Long id : friendList) {
             result.add(userStorage.getUser(id));
         }
-
         return result;
     }
 
     public List<User> getCommonFriends(long userId, long friendId) {
-        checkUser(userId);
-        checkUser(friendId);
+        User user = userStorage.getUser(userId);
+        User friend = userStorage.getUser(friendId);
+        if ((user == null) || (friend == null)) {
+            throw new NotFoundException("Пользователь не найден");
+        }
         List<User> result = new ArrayList<>();
-        List<Long> userFriends = userStorage.getUser(userId).getFriendList();
-        List<Long> friendFriends = userStorage.getUser(friendId).getFriendList();
+        List<Long> userFriends = user.getFriendList();
+        List<Long> friendFriends = friend.getFriendList();
         if ((!userFriends.isEmpty()) && (!friendFriends.isEmpty())) {
             for (Long userFriendId : userFriends) {
                 if (friendFriends.contains(userFriendId)) {
@@ -108,13 +116,6 @@ public class UserService {  //добавление в друзья, удален
 
         }
         return result;
-    }
-
-    private boolean checkUser(long id) {
-        if (userStorage.getUser(id) != null) {
-            return true;
-        }
-        return false;
     }
 
     private boolean validationUser(User user) throws ValidationException {

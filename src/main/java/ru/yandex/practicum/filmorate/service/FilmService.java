@@ -15,13 +15,12 @@ import java.util.List;
 @Service
 public class FilmService {  //добавление и удаление лайка, вывод 10 наиболее популярных фильмов по количеству лайков
     private final FilmStorage filmStorage;
+    private final UserService userService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    public FilmService(FilmStorage filmStorage) {
+    public FilmService(FilmStorage filmStorage, UserService userService) {
         this.filmStorage = filmStorage;
+        this.userService = userService;
     }
 
     public Collection<Film> getAllFilms() {
@@ -47,13 +46,13 @@ public class FilmService {  //добавление и удаление лайк�
     }
 
     public Film addLike(long userId, long filmId) {
-        if (!checkFilm(filmId)) {
+        Film film = filmStorage.getFilm(filmId);
+        if (film == null) {
             throw new NotFoundException("Фильма с тами id не обнаруженно.");
         }
         if (!(checkUser(userId))) {
             throw new NotFoundException("Пользователя с тами id не обнаруженно.");
         }
-        Film film = filmStorage.getFilm(filmId);
         List<Long> likeList = film.getLikeList();
         if (!likeList.contains(userId)) {
             likeList.add(userId);
@@ -65,13 +64,14 @@ public class FilmService {  //добавление и удаление лайк�
     }
 
     public Film deleteLike(long userId, long filmId) {
-        if (!checkFilm(filmId)) {
+        Film film = filmStorage.getFilm(filmId);
+        if (film == null) {
             throw new NotFoundException("Фильма с тами id не обнаруженно.");
         }
         if (!(checkUser(userId))) {
             throw new NotFoundException("Пользователя с тами id не обнаруженно.");
         }
-        Film film = filmStorage.getFilm(filmId);
+
         List<Long> likeList = film.getLikeList();
         if (likeList.contains(userId)) {
             likeList.remove(userId);
@@ -123,13 +123,6 @@ public class FilmService {  //добавление и удаление лайк�
 
     private boolean checkUser(long userId) {
         if (userService.getUser(userId) != null) {
-            return true;
-        }
-        return false;
-    }
-
-    private boolean checkFilm(long filmId) {
-        if (filmStorage.getFilm((int) filmId) != null) {
             return true;
         }
         return false;
