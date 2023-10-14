@@ -92,7 +92,7 @@ public class UserService {  //добавление в друзья, удален
         List<Long> userFriendsList = user.getFriendList();
         List<Long> unfriendFriendsList = unfriend.getFriendList();
 
-        userStorage.removeFriendListForID(userId, unfriendId);
+       // userStorage.removeFriendListForID(userId, unfriendId);
 
 
 /*        if (unfriendFriendsList.contains(userId)) {
@@ -101,14 +101,14 @@ public class UserService {  //добавление в друзья, удален
             userStorage.updateUser(unfriend);
         }*/
 
-       /* if (userFriendsList.contains(unfriendId)) {
+        if (userFriendsList.contains(unfriendId)) {
             userFriendsList.remove(unfriendId);
             //unfriendFriendsList.remove(userId);
             user.setFriendList(userFriendsList);
             //unfriend.setFriendList(unfriendFriendsList);
             userStorage.updateUser(user);
             //userStorage.updateUser(unfriend);
-        }*/
+        }
 
     }
 

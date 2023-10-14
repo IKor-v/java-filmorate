@@ -1,14 +1,24 @@
 package ru.yandex.practicum.filmorate.model;
 import lombok.*;
 
-import java.io.Serializable;
-import java.util.Objects;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Data
 public class MPA {
-    public Integer id;
-    //public String name;
+    private Integer id;
+    private String name;
 
+    public MPA() {
+        this.id = 0;
+        this.name = "";
+    }
+
+    public MPA(Integer id) {
+        this.id = id;
+        this.name = "";
+    }
+
+    public  MPA(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

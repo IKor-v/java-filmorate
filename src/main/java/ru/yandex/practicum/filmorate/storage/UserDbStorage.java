@@ -86,8 +86,8 @@ public class UserDbStorage implements UserStorage {
 
     private User updateFriendList(User user) {
         //if (deleteFriendListIfNeedUpdate(user))
-/*        String requestSQL = "DELETE FROM friend_list WHERE user_id = ?";
-        jdbcTemplate.update(requestSQL, user.getId());*/
+        String request1SQL = "DELETE FROM friend_list WHERE user_id = ?";
+        jdbcTemplate.update(request1SQL, user.getId());
 
             long user_id = user.getId();
             String requestSQL = "INSERT INTO friend_list (user_id, friend_id) VALUES (?, ?)"; //ON CONFLICT DO NOTHING;
@@ -171,9 +171,9 @@ public class UserDbStorage implements UserStorage {
         }*/
 
         SqlRowSet requestFriendRow = jdbcTemplate.queryForRowSet(
-                "SELECT user_id FROM friend_list WHERE friend_id = ?", userId);
+                "SELECT friend_id FROM friend_list WHERE user_id = ?", userId);
         while (requestFriendRow.next()) {
-            result.add((long) requestFriendRow.getInt("user_id"));
+            result.add((long) requestFriendRow.getInt("friend_id"));
         }
 
         return result;
