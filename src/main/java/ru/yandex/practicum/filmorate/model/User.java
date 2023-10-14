@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
+import lombok.ToString;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -25,7 +26,9 @@ public class User {
     @PastOrPresent
     private LocalDate birthday;
 
-    private List<Long> friendList = new ArrayList<>();
+    //@ToString.Exclude
+    //private List<Long> requestFriendList = new ArrayList<>();  //id пользователей, которым мы отправили запрос
+    private List<Long> friendList = new ArrayList<>(); //id пользователей, которые дружат с нами
 
     public User(long id, String email, String login, String name, LocalDate birthday) {
         this.id = id;

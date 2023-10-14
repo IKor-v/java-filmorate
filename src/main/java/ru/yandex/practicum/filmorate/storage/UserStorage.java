@@ -12,4 +12,7 @@ public interface UserStorage {
     User updateUser(User user);
 
     User getUser(long userId);
+
+    boolean addFriendListForID(long senderId, long recipientId);
+    boolean removeFriendListForID(long senderId, long recipientId);
 }

@@ -25,7 +25,7 @@ class FilmControllerTest {
     @BeforeEach
     @Autowired
     void setup() {
-        filmController = new FilmController(new FilmService(new InMemoryFilmStorage(), new UserService(new InMemoryUserStorage())));
+        //filmController = new FilmController(new FilmService(new InMemoryFilmStorage(), new UserService(new InMemoryUserStorage())));
     }
 
 

@@ -30,6 +30,10 @@ public class UserService {  //добавление в друзья, удален
         if (!validationUser(user)) {
             throw new ValidationException("Не удалось добавить пользователя: " + user.toString());
         }
+        String userName = user.getName();
+        if ((userName == null) || (userName.isBlank())) {
+            user.setName(user.getLogin());
+        }
         return userStorage.createUser(user);
     }
 
@@ -37,12 +41,18 @@ public class UserService {  //добавление в друзья, удален
         if (!validationUser(user)) {
             throw new ValidationException("Не удалось обновить данные пользователя: " + user.toString());
         }
+        String userName = user.getName();
+        if ((userName == null) || (userName.isBlank())) {
+            user.setName(user.getLogin());
+        }
         return userStorage.updateUser(user);
     }
 
     public User getUser(long userId) {
         return userStorage.getUser(userId);
     }
+
+
 
     public void addFriend(long userId, long friendId) {
         User user = userStorage.getUser(userId);
@@ -53,13 +63,21 @@ public class UserService {  //добавление в друзья, удален
         List<Long> userFriendsList = user.getFriendList();
         List<Long> friendFriendsList = friend.getFriendList();
 
+        //userStorage.addFriendListForID(userId, friendId);
+
+/*       if (!friendFriendsList.contains(userId)) {
+            friendFriendsList.add(userId);
+            friend.setFriendList(friendFriendsList);
+            userStorage.updateUser(friend);
+        }*/
+
         if (!userFriendsList.contains(friendId)) {
             userFriendsList.add(friendId);
-            friendFriendsList.add(userId);
+            //friendFriendsList.add(userId);
             user.setFriendList(userFriendsList);
-            friend.setFriendList(friendFriendsList);
+            //friend.setFriendList(friendFriendsList);
             userStorage.updateUser(user);
-            userStorage.updateUser(friend);
+            //userStorage.updateUser(friend);
         }
 
 
@@ -74,14 +92,23 @@ public class UserService {  //добавление в друзья, удален
         List<Long> userFriendsList = user.getFriendList();
         List<Long> unfriendFriendsList = unfriend.getFriendList();
 
-        if (userFriendsList.contains(unfriendId)) {
-            userFriendsList.remove(unfriendId);
+        userStorage.removeFriendListForID(userId, unfriendId);
+
+
+/*        if (unfriendFriendsList.contains(userId)) {
             unfriendFriendsList.remove(userId);
-            user.setFriendList(userFriendsList);
             unfriend.setFriendList(unfriendFriendsList);
-            userStorage.updateUser(user);
             userStorage.updateUser(unfriend);
-        }
+        }*/
+
+       /* if (userFriendsList.contains(unfriendId)) {
+            userFriendsList.remove(unfriendId);
+            //unfriendFriendsList.remove(userId);
+            user.setFriendList(userFriendsList);
+            //unfriend.setFriendList(unfriendFriendsList);
+            userStorage.updateUser(user);
+            //userStorage.updateUser(unfriend);
+        }*/
 
     }
 
