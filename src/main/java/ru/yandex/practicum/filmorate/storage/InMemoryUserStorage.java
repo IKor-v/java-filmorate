@@ -13,16 +13,6 @@ public class InMemoryUserStorage implements UserStorage {
     private final Map<Long, User> users = new HashMap<>();
     private int lastId = 1;
 
-    @Override
-    public boolean addFriendListForID(long senderId, long recipientId) {
-        return false;
-    }
-
-    @Override
-    public boolean removeFriendListForID(long senderId, long recipientId) {
-        return false;
-    }
-
     public Collection<User> getAllUsers() {
         return users.values();
     }

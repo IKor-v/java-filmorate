@@ -5,7 +5,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
 
 import java.util.ArrayList;
@@ -29,12 +28,12 @@ public class MpaService {
         }
     }
 
-    public List<MPA> getAllMpa( ){
+    public List<MPA> getAllMpa() {
 
         SqlRowSet mpaRow = jdbcTemplate.queryForRowSet("SELECT * FROM mpa_list");
         List<MPA> result = new ArrayList<>();
         while (mpaRow.next()) {
-            result.add( new MPA(mpaRow.getInt("mpa_id"), mpaRow.getString("mpa_name")));
+            result.add(new MPA(mpaRow.getInt("mpa_id"), mpaRow.getString("mpa_name")));
         }
         return result;
     }

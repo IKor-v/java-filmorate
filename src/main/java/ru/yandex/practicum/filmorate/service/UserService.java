@@ -53,7 +53,6 @@ public class UserService {  //добавление в друзья, удален
     }
 
 
-
     public void addFriend(long userId, long friendId) {
         User user = userStorage.getUser(userId);
         User friend = userStorage.getUser(friendId);
@@ -61,23 +60,12 @@ public class UserService {  //добавление в друзья, удален
             throw new NotFoundException("Пользователь не найден");
         }
         List<Long> userFriendsList = user.getFriendList();
-        List<Long> friendFriendsList = friend.getFriendList();
 
-        //userStorage.addFriendListForID(userId, friendId);
-
-/*       if (!friendFriendsList.contains(userId)) {
-            friendFriendsList.add(userId);
-            friend.setFriendList(friendFriendsList);
-            userStorage.updateUser(friend);
-        }*/
 
         if (!userFriendsList.contains(friendId)) {
             userFriendsList.add(friendId);
-            //friendFriendsList.add(userId);
             user.setFriendList(userFriendsList);
-            //friend.setFriendList(friendFriendsList);
             userStorage.updateUser(user);
-            //userStorage.updateUser(friend);
         }
 
 
@@ -90,24 +78,11 @@ public class UserService {  //добавление в друзья, удален
             throw new NotFoundException("Пользователь не найден");
         }
         List<Long> userFriendsList = user.getFriendList();
-        List<Long> unfriendFriendsList = unfriend.getFriendList();
-
-       // userStorage.removeFriendListForID(userId, unfriendId);
-
-
-/*        if (unfriendFriendsList.contains(userId)) {
-            unfriendFriendsList.remove(userId);
-            unfriend.setFriendList(unfriendFriendsList);
-            userStorage.updateUser(unfriend);
-        }*/
 
         if (userFriendsList.contains(unfriendId)) {
             userFriendsList.remove(unfriendId);
-            //unfriendFriendsList.remove(userId);
             user.setFriendList(userFriendsList);
-            //unfriend.setFriendList(unfriendFriendsList);
             userStorage.updateUser(user);
-            //userStorage.updateUser(unfriend);
         }
 
     }

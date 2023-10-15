@@ -6,7 +6,6 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.GenreService;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,17 +32,13 @@ public class UserDbStorage implements UserStorage {
                     userRow.getString("email"),
                     userRow.getString("login"),
                     userRow.getString("user_name"),
-                    userRow.getDate("birthday").toLocalDate()
-            );
-
+                    userRow.getDate("birthday").toLocalDate());
             user.setFriendList(getFriendListForId(userId));
             return user;
         } else {
             throw new NotFoundException("Такой пользователь не найден");
         }
-
     }
-
 
 
     @Override
@@ -59,10 +54,8 @@ public class UserDbStorage implements UserStorage {
                     userRow.getString("user_name"),
                     userRow.getDate("birthday").toLocalDate()
             );
-
             user.setFriendList(getFriendListForId(user.getId()));
             result.add(user);
-
         }
         return result;
     }
@@ -86,53 +79,16 @@ public class UserDbStorage implements UserStorage {
     }
 
     private User updateFriendList(User user) {
-        //if (deleteFriendListIfNeedUpdate(user))
         String request1SQL = "DELETE FROM friend_list WHERE user_id = ?";
         jdbcTemplate.update(request1SQL, user.getId());
 
-            long user_id = user.getId();
-            String requestSQL = "INSERT INTO friend_list (user_id, friend_id) VALUES (?, ?)"; //ON CONFLICT DO NOTHING;
-            for (Long friendId : user.getFriendList()) {
-                jdbcTemplate.update(requestSQL, user_id, friendId);
-            }
-
+        long user_id = user.getId();
+        String requestSQL = "INSERT INTO friend_list (user_id, friend_id) VALUES (?, ?)"; //ON CONFLICT DO NOTHING;
+        for (Long friendId : user.getFriendList()) {
+            jdbcTemplate.update(requestSQL, user_id, friendId);
+        }
         return user;
     }
-
-    @Override
-    public boolean addFriendListForID(long senderId, long recipientId) {
-
-        String requestSQL = "INSERT INTO friend_list (user_id, friend_id) VALUES (?, ?)"; //ON CONFLICT DO NOTHING;
-        jdbcTemplate.update(requestSQL, senderId, recipientId);
-        return true;
-    }
-
-    @Override
-    public boolean removeFriendListForID(long senderId, long recipientId) {
-
-        String requestSQL = "DELETE FROM friend_list WHERE user_id = ? AND friend_id = ?"; //ON CONFLICT DO NOTHING;
-        jdbcTemplate.update(requestSQL, senderId, recipientId);
-        return true;
-    }
-
-    private boolean deleteFriendListIfNeedUpdate(User user) {
-        User oldUser = getUser(user.getId());
-        List<Long> userFriendList = user.getFriendList();
-        List<Long> oldUserFriendList = oldUser.getFriendList();
-        if (userFriendList.size() != oldUserFriendList.size()) {
-            String requestSQL = "DELETE FROM like_list WHERE user_id = ?";
-            jdbcTemplate.update(requestSQL, user.getId());
-            return true;
-        }
-        if (!userFriendList.containsAll(oldUserFriendList)) {
-            String requestSQL = "DELETE FROM like_list WHERE user_id = ?";
-            jdbcTemplate.update(requestSQL, user.getId());
-            return true;
-        }
-
-        return false;
-    }
-
 
     private long getIdInLastUser(User user) {
         SqlRowSet userRow = jdbcTemplate.queryForRowSet(
@@ -143,40 +99,14 @@ public class UserDbStorage implements UserStorage {
         return userRow.getInt("user_id");
     }
 
-/*    private List<Long> getRequestFriendForId (long userId) {
-        List<Long> result = new ArrayList<>();
-
-        SqlRowSet requestFriendRow = jdbcTemplate.queryForRowSet(
-                "SELECT recipient_id FROM requests_friend_list WHERE sender_id =?", userId);
-        while (requestFriendRow.next()) {
-            result.add((long) requestFriendRow.getInt("recipient_id"));
-        }
-
-        return null;
-    }*/
-
     private List<Long> getFriendListForId(long userId) {
         List<Long> result = new ArrayList<>();
-
-/*        SqlRowSet requestFriendRow = jdbcTemplate.queryForRowSet(
-                "SELECT sender_id FROM requests_friend_list WHERE recipient_id =?"
-                , userId);
-        while (requestFriendRow.next()) {
-            result.add((long) requestFriendRow.getInt("sender_id"));
-        }*/
-
-/*        requestFriendRow = jdbcTemplate.queryForRowSet(
-                "SELECT friend2_id FROM friend_list WHERE friend1_id = ?", userId);
-        while (requestFriendRow.next()) {
-            result.add((long) requestFriendRow.getInt("friend2_id"));
-        }*/
 
         SqlRowSet requestFriendRow = jdbcTemplate.queryForRowSet(
                 "SELECT friend_id FROM friend_list WHERE user_id = ?", userId);
         while (requestFriendRow.next()) {
             result.add((long) requestFriendRow.getInt("friend_id"));
         }
-
         return result;
     }
 

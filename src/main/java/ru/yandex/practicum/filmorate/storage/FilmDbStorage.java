@@ -9,21 +9,20 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
-import ru.yandex.practicum.filmorate.service.GenreService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Component
 @Primary
 public class FilmDbStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
-    private final GenreService genreService;
 
     @Autowired
-    public FilmDbStorage(JdbcTemplate jdbcTemplate, GenreService genreService) {
+    public FilmDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.genreService = genreService;
     }
 
     @Override
@@ -47,7 +46,6 @@ public class FilmDbStorage implements FilmStorage {
     }
 
 
-
     @Override
     public Collection<Film> getAllFilms() {
         SqlRowSet filmRow = jdbcTemplate.queryForRowSet("SELECT * FROM films LEFT OUTER JOIN mpa_list ON films.mpa_id = mpa_list.mpa_id ORDER BY film_id");
@@ -60,37 +58,19 @@ public class FilmDbStorage implements FilmStorage {
                     filmRow.getString("description"),
                     filmRow.getDate("release_date").toLocalDate(),
                     filmRow.getInt("duration")
-                    , new MPA(filmRow.getInt("mpa_id"), filmRow.getString("mpa_name"))
-            );
+                    , new MPA(filmRow.getInt("mpa_id"), filmRow.getString("mpa_name")));
             long id = film.getId();
             film.setGenres(getGenreForFilmId(id));
             film.setLikeList(getLikeListForFilmId(id));
             result.add(film);
-
         }
-        //...
-
         return result;
     }
 
     @Override
     public Film createFilm(Film film) {
-
         String requestSQL = "INSERT INTO films (film_name, description, release_date, duration, mpa_id) VALUES (?, ?, ?, ?, ?)";
         jdbcTemplate.update(requestSQL, film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getMpa().getId());
-
-/*        SimpleJdbcInsert insertIntoUser = new SimpleJdbcInsert(jdbcTemplate).withTableName("user").usingGeneratedKeyColumns("id_user");
-        Map<String, Object> filmMaps = new HashMap<>();
-        filmMaps.put("name", film.getName());
-        filmMaps.put("description", film.getDescription());
-        filmMaps.put("release_date", film.getReleaseDate());
-        filmMaps.put("duration", film.getDuration());
-        filmMaps.put("mpa_id", film.getRate());
-
-
-        Number id = insertIntoUser.executeAndReturnKey(filmMaps);
-        System.out.println(id);*/
-
         film.setId(getIdInLastCreate(film));
         film.setGenres(updateGenres(film));
 
@@ -128,22 +108,15 @@ public class FilmDbStorage implements FilmStorage {
         return result;
     }
 
-    private List<Genre> updateGenres (Film film) {
+    private List<Genre> updateGenres(Film film) {
         if (film == null) {
             throw new NotFoundException("Передан пустой фильм.");
         }
         long filmId = film.getId();
-
         List<Integer> list = new ArrayList<>();
         List<Genre> result = film.getGenres();
-
-
         jdbcTemplate.update("DELETE FROM genres WHERE film_id = ?", filmId);
-
-        String requestGenreSQL = "INSERT INTO genres (film_id, genre_id) VALUES (?, ?)"; //ON CONFLICT DO NOTHING   //MERGE INTO genres KEY (film_id) VALUES (?, ?)
-/*        for (Genre genre : film.getGenres()) {
-            jdbcTemplate.update(requestGenreSQL, filmId, genre.getId());
-        }*/
+        String requestGenreSQL = "INSERT INTO genres (film_id, genre_id) VALUES (?, ?)";
 
         for (Genre genre : result) {
             int id = genre.getId();
@@ -169,7 +142,7 @@ public class FilmDbStorage implements FilmStorage {
         SqlRowSet genreRow = jdbcTemplate.queryForRowSet("SELECT * FROM genres LEFT OUTER JOIN genre_list ON genres.genre_id = genre_list.genre_id WHERE film_id = ?", filmId);
         List<Genre> result = new ArrayList<>();
         while (genreRow.next()) {
-            result.add( new Genre(genreRow.getInt("genre_id"), genreRow.getString("genre_name")));
+            result.add(new Genre(genreRow.getInt("genre_id"), genreRow.getString("genre_name")));
         }
         return result;
     }

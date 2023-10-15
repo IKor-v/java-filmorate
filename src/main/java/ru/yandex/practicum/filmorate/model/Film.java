@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -28,9 +29,9 @@ public class Film {
 /*    @ToString.Exclude
     private Duration fullDuration;*/
 
-    private MPA mpa; //enum?
+    private MPA mpa = new MPA();
 
-    private List<Genre> genres = new ArrayList<>(); //enum?
+    private List<Genre> genres = new ArrayList<>();
 
     private List<Long> likeList = new ArrayList<>();
 
@@ -62,7 +63,7 @@ public class Film {
         this.genres = genres;
     }
 
-    public Film( String name, String description, LocalDate releaseDate, int duration, MPA mpa, List<Genre> genres) {
+    public Film(String name, String description, LocalDate releaseDate, int duration, MPA mpa, List<Genre> genres) {
         this.id = 0;
         this.name = name;
         this.description = description;
@@ -72,46 +73,6 @@ public class Film {
         this.genres = genres;
     }
 
-/*    public Film( String name, String description, LocalDate releaseDate, int duration, MPA mpa) {
-        this.id = 0;
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-        this.mpa = mpa;
-    }*/
-
-    /*  public Film(long id, String name, String description, LocalDate releaseDate, int duration) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-        this.fullDuration = Duration.ofMinutes(duration);
-    }
-
-
-    public Film(long id, String name, String description, LocalDate releaseDate, int duration,  MPA mpa) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-        this.fullDuration = Duration.ofMinutes(duration);
-        this.mpa = mpa;
-    }
-    public Film(long id, String name, String description, LocalDate releaseDate, int duration, MPA mpa, List<Integer> genre, List<Long> likeList) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-        this.fullDuration = Duration.ofMinutes(duration);
-        this.mpa = mpa;
-        this.genre = genre;
-        this.likeList = likeList;
-    }
-
 
     public Film(long id, String name, String description, LocalDate releaseDate, int duration) {
         this.id = id;
@@ -119,36 +80,5 @@ public class Film {
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
-        this.fullDuration = Duration.ofMinutes(duration);
     }
-
-
-
-
-
-
-
-    public Film(long id, String name, String description, LocalDate releaseDate, int duration, MPA mpa) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-        this.fullDuration = Duration.ofMinutes(duration);
-        //this.mpa = mpa;
-    }
-
-
-
-    public Film(long id, String name, String description, LocalDate releaseDate, int duration, MPA mpa, List<Integer> genre, List<Long> likeList) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-
-        //this.mpa = mpa;
-        this.genre = genre;
-        this.likeList = likeList;
-    }*/
 }

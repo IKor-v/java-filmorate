@@ -23,19 +23,19 @@ public class GenreService {
     public Genre getGenreForId(int id) {
         SqlRowSet genreRow = jdbcTemplate.queryForRowSet("SELECT * FROM genre_list WHERE genre_id = ?", id);
         if (genreRow.next()) {
-           return new Genre(genreRow.getInt("genre_id"), genreRow.getString("genre_name"));
+            return new Genre(genreRow.getInt("genre_id"), genreRow.getString("genre_name"));
         } else {
             throw new NotFoundException("Жанра с id = " + id + " не обнаружено.");
         }
 
     }
 
-    public List<Genre> getAllGenres( ){
+    public List<Genre> getAllGenres() {
 
         SqlRowSet genreRow = jdbcTemplate.queryForRowSet("SELECT * FROM genre_list");
         List<Genre> result = new ArrayList<>();
         while (genreRow.next()) {
-            result.add( new Genre(genreRow.getInt("genre_id"), genreRow.getString("genre_name")));
+            result.add(new Genre(genreRow.getInt("genre_id"), genreRow.getString("genre_name")));
         }
 
         return result;

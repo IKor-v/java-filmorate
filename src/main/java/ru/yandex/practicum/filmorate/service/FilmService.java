@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.time.LocalDate;
@@ -47,8 +46,6 @@ public class FilmService {  //добавление и удаление лайк�
     }
 
 
-
-
     public Film addLike(long userId, long filmId) {
         Film film = filmStorage.getFilm(filmId);
         if (film == null) {
@@ -57,7 +54,6 @@ public class FilmService {  //добавление и удаление лайк�
         if (!(checkUser(userId))) {
             throw new NotFoundException("Пользователя с тами id не обнаруженно.");
         }
-
 
         List<Long> likeList = film.getLikeList();
         if (!likeList.contains(userId)) {
@@ -91,7 +87,7 @@ public class FilmService {  //добавление и удаление лайк�
 
     public Collection<Film> getPopularFilms(int count) {
         Collection<Film> result = new ArrayList<>();
-        Film minimalFilm = new Film( 1, "1", "",LocalDate.now(), 12, null);
+        Film minimalFilm = new Film(1, "1", "", LocalDate.now(), 12, null);
         int minimalLikeInList = -1;
 
         if (filmStorage.getSize() == 0) {
