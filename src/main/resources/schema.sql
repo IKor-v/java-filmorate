@@ -10,10 +10,9 @@ CREATE TABLE IF NOT EXISTS films (
 	description varchar(200) NOT NULL,
 	release_date DATE,
 	duration INTEGER,
-	mpa_id INTEGER, --REFERENCES mpa_name(mpa_id),
+	mpa_id INTEGER,
 	CONSTRAINT positive_duration CHECK (duration > 0),
 	CONSTRAINT not_empty_name CHECK ((REPLACE(film_name, ' ', '')) <> '')
-	--CONSTRAINT correct_id_for_age_limit CHECK (age_limit_id BETWEEN 1 AND 5)
 	);
 
 CREATE TABLE IF NOT EXISTS users(
@@ -22,7 +21,6 @@ CREATE TABLE IF NOT EXISTS users(
 	user_name varchar(100) NOT NULL,
 	email varchar(100)  NOT NULL,
 	birthday DATE NOT NULL,
---CONSTRAINT correct_birthday CHECK ()
 	CONSTRAINT correct_email CHECK (email LIKE '%_@_%.%')
 	);
 
@@ -48,15 +46,4 @@ CREATE TABLE IF NOT EXISTS friend_list (
 	friend_id INTEGER REFERENCES users(user_id),
 	CONSTRAINT uniqie_duo UNIQUE (user_id, friend_id),
 	CONSTRAINT not_selffriend CHECK (user_id != friend_id)
-	);
-
-
-
-
---
-
-CREATE TABLE IF NOT EXISTS requests_friend_list (
-	sender_id INTEGER REFERENCES users(user_id),
-	recipient_id INTEGER REFERENCES users(user_id),
-	CONSTRAINT not_selfi CHECK (sender_id != recipient_id)
 	);
