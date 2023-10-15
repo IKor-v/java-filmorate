@@ -34,8 +34,8 @@ public class FilmDbStorage implements FilmStorage {
                     filmRow.getString("film_name"),
                     filmRow.getString("description"),
                     filmRow.getDate("release_date").toLocalDate(),
-                    filmRow.getInt("duration")
-                    , new MPA(filmRow.getInt("mpa_id"), filmRow.getString("mpa_name"))
+                    filmRow.getInt("duration"),
+                    new MPA(filmRow.getInt("mpa_id"), filmRow.getString("mpa_name"))
             );
             film.setGenres(getGenreForFilmId(filmId));
             film.setLikeList(getLikeListForFilmId(filmId));
@@ -57,8 +57,8 @@ public class FilmDbStorage implements FilmStorage {
                     filmRow.getString("film_name"),
                     filmRow.getString("description"),
                     filmRow.getDate("release_date").toLocalDate(),
-                    filmRow.getInt("duration")
-                    , new MPA(filmRow.getInt("mpa_id"), filmRow.getString("mpa_name")));
+                    filmRow.getInt("duration"),
+                    new MPA(filmRow.getInt("mpa_id"), filmRow.getString("mpa_name")));
             long id = film.getId();
             film.setGenres(getGenreForFilmId(id));
             film.setLikeList(getLikeListForFilmId(id));
@@ -169,6 +169,5 @@ public class FilmDbStorage implements FilmStorage {
 
         return filmRow.getInt("film_id");
     }
-
 
 }
