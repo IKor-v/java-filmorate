@@ -6,6 +6,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.GenreService;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,18 +32,18 @@ public class UserDbStorage implements UserStorage {
                     userRow.getInt("user_id"),
                     userRow.getString("email"),
                     userRow.getString("login"),
-                    userRow.getString("name"),
+                    userRow.getString("user_name"),
                     userRow.getDate("birthday").toLocalDate()
             );
 
             user.setFriendList(getFriendListForId(userId));
-            //user.setRequestFriendList(getRequestFriendForId(userId));
             return user;
         } else {
             throw new NotFoundException("Такой пользователь не найден");
         }
 
     }
+
 
 
     @Override
@@ -55,7 +56,7 @@ public class UserDbStorage implements UserStorage {
                     userRow.getInt("user_id"),
                     userRow.getString("email"),
                     userRow.getString("login"),
-                    userRow.getString("name"),
+                    userRow.getString("user_name"),
                     userRow.getDate("birthday").toLocalDate()
             );
 
@@ -68,7 +69,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User createUser(User user) {
-        String requestUsersSQL = "INSERT INTO users (login, name, email, birthday) VALUES (?, ?, ?, ?)";
+        String requestUsersSQL = "INSERT INTO users (login, user_name, email, birthday) VALUES (?, ?, ?, ?)";
         jdbcTemplate.update(requestUsersSQL, user.getLogin(), user.getName(), user.getEmail(), user.getBirthday());
 
         user.setId(getIdInLastUser(user));
@@ -78,7 +79,7 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User updateUser(User user) {
         getUser(user.getId());
-        String requestSQL = "UPDATE users SET login = ?, name = ?, email = ?, birthday = ? WHERE user_id = ?";
+        String requestSQL = "UPDATE users SET login = ?, user_name = ?, email = ?, birthday = ? WHERE user_id = ?";
         jdbcTemplate.update(requestSQL, user.getLogin(), user.getName(), user.getEmail(), user.getBirthday(), user.getId());
 
         return updateFriendList(user);
@@ -135,7 +136,7 @@ public class UserDbStorage implements UserStorage {
 
     private long getIdInLastUser(User user) {
         SqlRowSet userRow = jdbcTemplate.queryForRowSet(
-                "SELECT user_id FROM users WHERE login = ? AND name = ? AND email = ? AND birthday = ? ORDER BY user_id DESC",
+                "SELECT user_id FROM users WHERE login = ? AND user_name = ? AND email = ? AND birthday = ? ORDER BY user_id DESC",
                 user.getLogin(), user.getName(), user.getEmail(), user.getBirthday());
         userRow.next();
 
