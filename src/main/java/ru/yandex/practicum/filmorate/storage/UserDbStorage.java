@@ -82,10 +82,9 @@ public class UserDbStorage implements UserStorage {
         String request1SQL = "DELETE FROM friend_list WHERE user_id = ?";
         jdbcTemplate.update(request1SQL, user.getId());
 
-        long user_id = user.getId();
-        String requestSQL = "INSERT INTO friend_list (user_id, friend_id) VALUES (?, ?)"; //ON CONFLICT DO NOTHING;
+        String requestSQL = "INSERT INTO friend_list (user_id, friend_id) VALUES (?, ?)";
         for (Long friendId : user.getFriendList()) {
-            jdbcTemplate.update(requestSQL, user_id, friendId);
+            jdbcTemplate.update(requestSQL, user.getId(), friendId);
         }
         return user;
     }
