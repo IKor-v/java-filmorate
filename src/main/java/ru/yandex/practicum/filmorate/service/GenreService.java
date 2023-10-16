@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
@@ -11,14 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class GenreService {
 
     private final JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    public GenreService(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     public Genre getGenreForId(int id) {
         SqlRowSet genreRow = jdbcTemplate.queryForRowSet("SELECT * FROM genre_list WHERE genre_id = ?", id);

@@ -62,7 +62,6 @@ public class FilmService {  //добавление и удаление лайк�
             filmStorage.updateFilm(film);
         }
         return film;
-
     }
 
     public Film deleteLike(long userId, long filmId) {
@@ -81,9 +80,7 @@ public class FilmService {  //добавление и удаление лайк�
             filmStorage.updateFilm(film);
         }
         return film;
-
     }
-
 
     public Collection<Film> getPopularFilms(int count) {
         Collection<Film> result = new ArrayList<>();
@@ -119,7 +116,6 @@ public class FilmService {  //добавление и удаление лайк�
 
         }
         return result;
-
     }
 
 
