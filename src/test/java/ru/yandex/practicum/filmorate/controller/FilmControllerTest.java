@@ -1,31 +1,36 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.model.MPA;
 
 import java.time.LocalDate;
 import java.util.Collection;
 
 
 @Slf4j
+@SpringBootTest
+@AutoConfigureTestDatabase
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 class FilmControllerTest {
-
-    private FilmController filmController;
-
-
-    @BeforeEach
     @Autowired
-    void setup() {
-        filmController = new FilmController(new FilmService(new InMemoryFilmStorage(), new UserService(new InMemoryUserStorage())));
+    private FilmController filmController;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @AfterEach
+    void close() {
+        jdbcTemplate.execute("DELETE FROM users");
+        jdbcTemplate.execute("DELETE FROM films");
     }
 
 
@@ -114,6 +119,7 @@ class FilmControllerTest {
                 LocalDate.now().minusYears(30), 120);
         filmController.createFilm(film);
         Collection<Film> films = filmController.getAllFilms();
+        film.setMpa(new MPA(0, null));
         Assertions.assertEquals(1, films.size());
         Assertions.assertTrue(films.contains(film));
 
@@ -121,6 +127,7 @@ class FilmControllerTest {
                 LocalDate.now().minusYears(30), 144);
         filmController.updateFilm(film1);
         films = filmController.getAllFilms();
+        film1.setMpa(new MPA(0, null));
         Assertions.assertEquals(1, films.size());
         Assertions.assertTrue(films.contains(film1));
         Assertions.assertFalse(films.contains(film));
@@ -170,6 +177,7 @@ class FilmControllerTest {
         }
 
         Collection<Film> films = filmController.getAllFilms();
+        film.setMpa(new MPA(0, null));
         Assertions.assertEquals(1, films.size());
         Assertions.assertTrue(films.contains(film));
         Assertions.assertEquals(5, countError);

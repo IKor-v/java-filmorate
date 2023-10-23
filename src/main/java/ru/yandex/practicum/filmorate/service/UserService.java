@@ -30,12 +30,20 @@ public class UserService {  //добавление в друзья, удален
         if (!validationUser(user)) {
             throw new ValidationException("Не удалось добавить пользователя: " + user.toString());
         }
+        String userName = user.getName();
+        if ((userName == null) || (userName.isBlank())) {
+            user.setName(user.getLogin());
+        }
         return userStorage.createUser(user);
     }
 
     public User updateUser(User user) {
         if (!validationUser(user)) {
             throw new ValidationException("Не удалось обновить данные пользователя: " + user.toString());
+        }
+        String userName = user.getName();
+        if ((userName == null) || (userName.isBlank())) {
+            user.setName(user.getLogin());
         }
         return userStorage.updateUser(user);
     }
@@ -44,6 +52,7 @@ public class UserService {  //добавление в друзья, удален
         return userStorage.getUser(userId);
     }
 
+
     public void addFriend(long userId, long friendId) {
         User user = userStorage.getUser(userId);
         User friend = userStorage.getUser(friendId);
@@ -51,15 +60,12 @@ public class UserService {  //добавление в друзья, удален
             throw new NotFoundException("Пользователь не найден");
         }
         List<Long> userFriendsList = user.getFriendList();
-        List<Long> friendFriendsList = friend.getFriendList();
+
 
         if (!userFriendsList.contains(friendId)) {
             userFriendsList.add(friendId);
-            friendFriendsList.add(userId);
             user.setFriendList(userFriendsList);
-            friend.setFriendList(friendFriendsList);
             userStorage.updateUser(user);
-            userStorage.updateUser(friend);
         }
 
 
@@ -72,15 +78,11 @@ public class UserService {  //добавление в друзья, удален
             throw new NotFoundException("Пользователь не найден");
         }
         List<Long> userFriendsList = user.getFriendList();
-        List<Long> unfriendFriendsList = unfriend.getFriendList();
 
         if (userFriendsList.contains(unfriendId)) {
             userFriendsList.remove(unfriendId);
-            unfriendFriendsList.remove(userId);
             user.setFriendList(userFriendsList);
-            unfriend.setFriendList(unfriendFriendsList);
             userStorage.updateUser(user);
-            userStorage.updateUser(unfriend);
         }
 
     }

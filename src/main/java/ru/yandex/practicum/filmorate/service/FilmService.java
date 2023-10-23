@@ -45,6 +45,7 @@ public class FilmService {  //добавление и удаление лайк�
         return filmStorage.getFilm(filmId);
     }
 
+
     public Film addLike(long userId, long filmId) {
         Film film = filmStorage.getFilm(filmId);
         if (film == null) {
@@ -53,6 +54,7 @@ public class FilmService {  //добавление и удаление лайк�
         if (!(checkUser(userId))) {
             throw new NotFoundException("Пользователя с тами id не обнаруженно.");
         }
+
         List<Long> likeList = film.getLikeList();
         if (!likeList.contains(userId)) {
             likeList.add(userId);
@@ -60,7 +62,6 @@ public class FilmService {  //добавление и удаление лайк�
             filmStorage.updateFilm(film);
         }
         return film;
-
     }
 
     public Film deleteLike(long userId, long filmId) {
@@ -79,13 +80,11 @@ public class FilmService {  //добавление и удаление лайк�
             filmStorage.updateFilm(film);
         }
         return film;
-
     }
-
 
     public Collection<Film> getPopularFilms(int count) {
         Collection<Film> result = new ArrayList<>();
-        Film minimalFilm = new Film(0, "1", "", LocalDate.now(), 1);
+        Film minimalFilm = new Film(1, "1", "", LocalDate.now(), 12, null);
         int minimalLikeInList = -1;
 
         if (filmStorage.getSize() == 0) {
@@ -117,7 +116,6 @@ public class FilmService {  //добавление и удаление лайк�
 
         }
         return result;
-
     }
 
 
@@ -140,7 +138,7 @@ public class FilmService {  //добавление и удаление лайк�
             message += "дата выхода фильма не может быть раньше 25.12.1895";
         } else if (film.getDescription().length() > 200) {
             message += "длинна описания не может быть более 200 символов.";
-        } else if (film.getFullDuration().toSeconds() <= 0) {
+        } else if (film.getDuration() <= 0) {
             message += "продолжительность фильма может быть только положительной.";
         } else {
             return true;
